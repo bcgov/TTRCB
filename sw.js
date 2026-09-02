@@ -15,7 +15,7 @@
    Without that, testers keep the old build and report bugs you have fixed.
 --------------------------------------------------------------------------- */
 
-var CACHE_VERSION = "rcb-31August2026";
+var CACHE_VERSION = "rcb-02September2026";
 
 /* Same-folder assets. Paths are relative so this works wherever the document
    library puts the folder. Failures are tolerated - SharePoint may refuse any
