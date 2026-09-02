@@ -1,0 +1,45 @@
+{
+ "name": "BC MOTT Radio Call Sign Directory",
+ "short_name": "Call Signs",
+ "id": "bcmott-radio-callsign-directory",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#003366",
+ "theme_color": "#013366",
+ "icons": [
+  {
+   "src": "rcb-icon-b2-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "rcb-icon-b2-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "rcb-icon-b2-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "Repeater map",
+   "short_name": "Map",
+   "url": "./#repeatermap",
+   "icons": [
+    {
+     "src": "rcb-icon-b2-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  }
+ ]
+}
