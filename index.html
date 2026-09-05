@@ -657,51 +657,52 @@ html.dark .rd.rd1{stroke:#E8AE3C}
   padding:12px 16px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.10)}
 .abtx{font-size:12px;color:var(--muted);line-height:1.55;margin:8px 0}
 .abtx b{color:var(--ink)}
-/* Trunk area card, "the path" layout - 4 Sep 2026. Two new elements - the
-   full-bleed profile and the channel dial - and nothing else new: sections
-   use the house gold rule + small-caps heading, rows use .fld, notes use
-   --tint, warnings use the advisory pair. */
-.tchero{position:relative;background:var(--navy)}
-.tchero canvas{display:block;width:100%;height:148px}
-.tccap{position:absolute;left:var(--sp4);right:var(--sp4);top:var(--sp3);
-  display:flex;justify-content:space-between;align-items:flex-start;gap:var(--sp3)}
-.tccap div:last-child{text-align:right}
-.tccap span{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8FB4DC}
-.tccap b{display:block;font-size:13px;color:#fff;margin-top:2px;line-height:1.3}
-.tcverdict{display:flex;gap:9px;align-items:flex-start;padding:11px var(--sp4);
-  font-size:13px;line-height:1.45;background:#FFF6F2;color:var(--advisory);font-weight:600;
-  border-bottom:1px solid var(--hairline)}
-.tcverdict.ok{background:#EAF4EC;color:var(--success)}
-.tcverdict b{font-weight:600}
-.tcverdict span{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:3px}
-.tcin{padding:10px var(--sp4);font-size:12.5px;font-weight:600;background:var(--tint);color:var(--navy);
-  border-bottom:1px solid var(--hairline)}
-.tcfar{padding:10px var(--sp4);font-size:12.5px;font-weight:600;background:#FFF6F2;color:var(--advisory);
-  border-bottom:1px solid var(--hairline)}
-.tcdial{display:flex;align-items:center;gap:var(--sp4);padding:var(--sp4)}
-.tcdial + .tcreport{margin-top:calc(var(--sp2) * -1)}
-.tcn{flex:none;font-size:48px;line-height:1;font-weight:800;color:var(--navy);
-  letter-spacing:-.04em;font-variant-numeric:tabular-nums}
-.tcn small{display:block;font-size:11px;font-weight:700;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--navy);margin-bottom:4px}
-.tcm b{font-size:16px;color:var(--ink)}
-.tcm span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
-.tcyou{margin:0 var(--sp4) var(--sp3);padding:9px 12px;background:var(--tint);
-  border-radius:8px;font-size:12.5px;line-height:1.45;color:var(--navy)}
+/* Trunk card, "instrument" layout - 4 Sep 2026. The channel is the answer so
+   it leads; the profile is a measurement so it is a chart with the drop
+   labelled on it and the figures in a strip beneath. What this replaced put
+   the verdict in a narrow two-column block that wrapped its headline over four
+   lines, inverted its label/value pairs, and painted end labels into the
+   canvas in a font used nowhere else in the app. */
+.tctop{display:flex;align-items:flex-start;gap:var(--sp4);padding:var(--sp4) var(--sp4) var(--sp3)}
+.tctile{flex:none;width:76px;height:76px;border-radius:14px;background:var(--navy);color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.tctile i{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:#9DB6D2;margin-bottom:4px}
+.tctile b{font-size:35px;font-weight:800;font-variant-numeric:tabular-nums}
+.tcwho{min-width:0;padding-top:2px}
+.tcwho b{font-size:18px;display:block;margin-bottom:2px}
+.tcwho span{font-size:12.5px;color:var(--muted);display:block;line-height:1.4}
+.tcwho em{font-style:normal;display:inline-block;margin-top:7px;font-size:12px;color:var(--navy);
+  background:var(--tint);border-radius:6px;padding:4px 8px}
+.tcchart{margin:0 var(--sp4) var(--sp3)}
+.tcchart canvas{display:block;width:100%;height:96px}
+.tcstats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--hairline);
+  border-radius:10px;overflow:hidden;margin:0 var(--sp4) var(--sp3)}
+.tcstats div{padding:9px 10px;font-size:13.5px;font-weight:700;color:var(--ink)}
+.tcstats div+div{border-left:1px solid var(--hairline)}
+.tcstats i{display:block;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+.tcstats .bad{color:var(--advisory)}
+.tcstats .ok{color:var(--success)}
+.tcnote2{margin:0 var(--sp4) var(--sp4);font-size:11.5px;line-height:1.5;color:var(--muted)}
+.tcin{padding:10px var(--sp4);font-size:12.5px;font-weight:600;background:var(--tint);
+  color:var(--navy);border-bottom:1px solid var(--hairline)}
+.tcfar{padding:10px var(--sp4);font-size:12.5px;font-weight:600;background:#FFF6F2;
+  color:var(--advisory);border-bottom:1px solid var(--hairline)}
 .tcnone{padding:var(--sp3) var(--sp4);font-size:13px;line-height:1.5;color:var(--muted)}
-.tcnote{margin:var(--sp3) var(--sp4) 0;background:var(--tint);border-radius:8px;
+.tcnote{margin:0 var(--sp4) var(--sp3);background:var(--tint);border-radius:8px;
   padding:10px 12px;font-size:11px;line-height:1.45;color:var(--muted)}
-.tclist ul{list-style:none;margin:0;padding:0;column-count:2;column-gap:var(--sp4)}
-.tclist li{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;
-  padding:5px 0;break-inside:avoid}
-.tclist li b{font-variant-numeric:tabular-nums;color:var(--navy)}
-.tclist li.self{font-weight:700}
 .tcreport{display:block;width:calc(100% - var(--sp4) * 2);margin:0 var(--sp4) var(--sp4);
   padding:11px 12px;border:1.5px solid var(--hairline);border-radius:10px;
   background:var(--surface);color:var(--navy);font-family:inherit;font-size:13px;
   font-weight:600;text-align:left;cursor:pointer;
   transition:background .16s ease,border-color .16s ease}
 .tcreport:active{background:var(--surface-alt)}
+.tclist ul{list-style:none;margin:0;padding:0;column-count:2;column-gap:var(--sp4)}
+.tclist li{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;
+  padding:5px 0;break-inside:avoid}
+.tclist li b{font-variant-numeric:tabular-nums;color:var(--navy)}
+.tclist li.self{font-weight:700}
 .tcfine{padding:var(--sp3) var(--sp4) var(--sp4);margin:0;font-size:10.5px;line-height:1.45;color:var(--faint)}
 .losbox{margin-top:10px;padding:10px 12px;border:1px solid var(--hairline);border-radius:10px;
   background:var(--surface)}
@@ -1117,7 +1118,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i>4 Sep &middot; 22:04</i></span>
+      <span class="hdver"><b>Beta 2</b><i>4 Sep &middot; 22:15</i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -2455,7 +2456,20 @@ function losDraw(cv, r, opt){
   var W = cv.width = (cv.clientWidth || 300) * 2,
       H = cv.height = (opt.h || 112);
   var g = cv.getContext("2d");
+  if(!g) return;
   var dk = opt.onDark || document.documentElement.classList.contains("dark");
+  /* chart mode: two faint height rules so the drop is readable as a height,
+     and the figure written on the peak. The end labels stay out of the canvas
+     - they belong in HTML, in the app's own font. */
+  if(opt.chart){
+    g.clearRect(0, 0, W, H);
+    g.strokeStyle = dk ? "rgba(160,180,200,.16)" : "rgba(120,135,150,.16)";
+    g.lineWidth = 1;
+    [0.34, 0.67].forEach(function(f){
+      var yy = H - 20 - f * (H - 36);
+      g.beginPath(); g.moveTo(0, yy); g.lineTo(W, yy); g.stroke();
+    });
+  }
   var col = r.clear ? (dk ? "#57B36B" : "#2E8540") : (dk ? "#F08A4B" : "#C84507");
   var terrTop = dk ? "rgba(143,182,232,.42)" : "rgba(1,51,102,.38)";
   var terrBot = dk ? "rgba(143,182,232,.10)" : "rgba(1,51,102,.10)";
@@ -5748,12 +5762,19 @@ function drawSchematic(cv, o){
   var W = cv.width = (cv.clientWidth || 300) * 2,
       H = cv.height = (cv.clientHeight || 104) * 2;
   var g = cv.getContext("2d");
-  if(!g) return;                 /* no 2d context: the words still stand alone */
+  if(!g) return;                 /* no 2d context: the figures still stand alone */
   var dk = o.onDark || document.documentElement.classList.contains("dark");
   var col = o.tier === 0 ? (dk ? "#57B36B" : "#2E8540") : (dk ? "#F08A4B" : "#C84507");
   g.clearRect(0, 0, W, H);
 
-  var padX = 26, padB = 26, padT = 20;
+  var padX = o.chart ? 4 : 26, padB = o.chart ? 20 : 26, padT = o.chart ? 24 : 20;
+  if(o.chart){
+    g.strokeStyle = "rgba(120,135,150,.16)"; g.lineWidth = 1;
+    [0.34, 0.67].forEach(function(f){
+      var yy = (H - padB) - f * (H - padB - padT);
+      g.beginPath(); g.moveTo(0, yy); g.lineTo(W, yy); g.stroke();
+    });
+  }
   var x0 = padX, x1 = W - padX, span = x1 - x0;
   var yBase = H - padB;
   /* Vertical scale: the obstruction plus headroom, floor of 300 m so a clear
@@ -5800,12 +5821,24 @@ function drawSchematic(cv, o){
     }
   }
 
-  /* the two ends */
+  /* the two ends - or, in chart mode, the figure that matters */
   var lbl = dk ? "rgba(233,238,244,.85)" : "rgba(50,49,48,.75)";
-  g.font = "600 20px -apple-system,Segoe UI,Roboto,sans-serif";
-  g.fillStyle = lbl; g.textBaseline = "alphabetic";
-  g.textAlign = "left";  g.fillText("You", x0, H - 8);
-  g.textAlign = "right"; g.fillText(o.site || "Repeater", x1, H - 8);
+  g.textBaseline = "alphabetic";
+  if(o.chart){
+    if(o.dropM > 0){
+      var px2 = x0 + span * Math.min(0.92, Math.max(0.08, o.pos || 0.5));
+      var lineY2 = yOf(180 - 4 * sag * (o.pos || 0.5) * (1 - (o.pos || 0.5)));
+      var peakY2 = lineY2 - ((o.dropM || 30) / top) * (yBase - padT);
+      g.font = "700 19px -apple-system,Segoe UI,Roboto,sans-serif";
+      g.fillStyle = col; g.textAlign = "center";
+      g.fillText(o.dropM + " m", px2, Math.max(20, peakY2 - 12));
+    }
+  } else {
+    g.font = "600 20px -apple-system,Segoe UI,Roboto,sans-serif";
+    g.fillStyle = lbl;
+    g.textAlign = "left";  g.fillText("You", x0, H - 8);
+    g.textAlign = "right"; g.fillText(o.site || "Repeater", x1, H - 8);
+  }
   [[x0, "left"], [x1, "right"]].forEach(function(e){
     g.beginPath(); g.moveTo(e[0], yBase); g.lineTo(e[0], yOf(180));
     g.strokeStyle = dk ? "rgba(233,238,244,.5)" : "rgba(50,49,48,.4)";
@@ -5855,17 +5888,14 @@ function terrainBlock(lat, lon, siteName, mine){
 }
 
 function openTrunkCard(a, ll){
-  /* Redesigned 4 Sep 2026 ("the path"). The old card stacked five coloured
-     blocks - region band, distance banner, channel box, terrain box, then two
-     lists carrying the same channels twice - and looked busy without saying
-     more. This one leads with the picture, because the question people
-     actually arrive with is "can I reach it", then gives the channel, then
-     the facts. One accent, one graphic, no box inside a box. */
+  /* "Instrument" layout, 4 Sep 2026. The card is a measurement, not a poster:
+     channel first, then the profile as a chart with the drop labelled on it,
+     then a three-cell strip carrying the numbers. The layout it replaced put
+     the verdict in a narrow two-column block that wrapped its headline over
+     four lines, inverted its label/value pairs, and painted the end labels
+     into the canvas in a font used nowhere else. */
   var half = $("mapsheet").classList.contains("on");
   $("detail").classList.toggle("half", half);
-  /* canpeek: there is a map behind this sheet, so it has two resting
-     positions and the grabber is worth labelling. Opened from the list there
-     is nowhere to pull back to and the hint stays hidden. */
   $("detail").classList.toggle("canpeek", half);
   var _gh = $("grabhint") && $("grabhint").querySelector("i");
   if(_gh) _gh.textContent = half ? "Pull up for more" : "Pull down for the map";
@@ -5880,102 +5910,68 @@ function openTrunkCard(a, ll){
   var _org  = userOrigin();
   var _km   = _org ? kmToArea(_org.y, _org.x, a.seg) : null;
   var _inside = (_km === 0);
-  /* A trunk can be 200 km long. Being inside it says nothing about whether
-     the spot you tapped is where you are standing - tap Duncan from Victoria
-     and both are in Central Island South, but a different repeater serves
-     each. "Here" means the tap is within 3 km of you; everything else on this
-     card is about THE TAP. */
+  /* A trunk can be 200 km long. Being inside one says nothing about whether
+     the tap is where you are standing - tap Duncan from Victoria and both sit
+     in Central Island South with a different repeater serving each. "Here"
+     means the tap is within 3 km; everything else on this card is about THE
+     TAP. */
   var _here = !!(_org && ll && kmBetween(_org.y, _org.x, ll[0], ll[1]) < 3);
   var _far  = (_km !== null && _km > 200);
+  var _mine = (!_here && _org) ? servingAt(_org.y, _org.x) : null;
+  var _mn   = _mine && _mine.nearest && _mine.nearest.ch ? _mine.nearest : null;
   var h = "";
 
-  /* ---- the path, full bleed ---------------------------------------- */
+  /* ---- channel first: it is the answer ------------------------------ */
+  if(nr || sc.length){
+    var _ch   = nr ? nr.ch : sc[0];
+    var _site = nr ? nr.site : (ss[0] || "");
+    h += '<div class="tctop"><div class="tctile"><i>Ch</i><b>' + esc(_ch) + '</b></div>' +
+         '<div class="tcwho"><b>' + esc(_site) + '</b><span>' +
+         (nr ? (_here ? "closest repeater to you"
+                      : "closest repeater to the spot you tapped")
+             : "repeater in this area") + '</span>' +
+         (_mn ? '<em>You: ' + esc(_mn.site) + ' \u00b7 Ch ' + esc(_mn.ch) + '</em>' : "") +
+         '</div></div>';
+    if(CONTRACTOR && nr){
+      h += '<button class="tcreport" id="tcreport">' +
+           'Not getting through on Ch ' + esc(nr.ch) + '? Report it</button>';
+    }
+  } else {
+    h += '<div class="tcnone">No repeater could be matched here. Try the ' +
+         'strongest signal you can hear, or search the directory by name.</div>';
+  }
+
+  /* ---- the chart and the numbers ------------------------------------ */
   var wantProfile = _org && !_inside && !_far;
   if(wantProfile){
-    h += '<div class="tchero" id="losbox">' +
-         '<canvas id="loscv"></canvas>' +
-         '<div class="tccap"><div><span>You</span><b>' +
-           esc(_org.l && _org.l !== "your current location"
-                 ? _org.l.replace(/^near\s+/i, "") : "here") + '</b></div>' +
-         '<div><span>' + esc(kmBandText(_km)) + '</span><b>' +
-           esc(named ? a.u : (RNAMES[a.g] || a.g)) + '</b></div></div></div>' +
-         '<div class="tcverdict" id="losv"><b>Reading the ground\u2026</b></div>';
+    h += '<div class="tcchart" id="losbox"><canvas id="loscv"></canvas></div>' +
+         '<div class="tcstats" id="losstats"><div><i>Distance</i>' +
+           esc(kmBandText(_km)).replace(/^between /, "").replace(/ km$/, " km") +
+         '</div><div><i>High ground</i><b id="losdrop">\u2014</b></div>' +
+         '<div><i>Path</i><b id="losgrade">reading\u2026</b></div></div>' +
+         '<p class="tcnote2">Ground between you and the near edge of this area, ' +
+         'from elevation data. The repeater sits beyond that edge, usually higher.</p>';
   } else if(_inside && ll){
-    /* Inside the trunk: no path to sample, but the shipped grid carries the
-       real distance, the real position of the worst obstruction and the real
-       height it reaches - AT THE TAPPED SPOT, which is what this card is
-       about. */
     var _ti = terrainAt(ll[0], ll[1]), _db = distBandAt(ll[0], ll[1]);
     if(_ti){
-      var _who = _here ? "you" : "that spot";
-      var _wh  = _ti.pos < 0.34 ? "close to " + _who
-               : (_ti.pos > 0.66 ? "closer to the repeater" : "about halfway");
-      var _vb  = _ti.tier === 0
-        ? "Nothing measured rises into the path"
-        : (_ti.tier === 1
-           ? "Marginal \u2014 high ground " + _wh + " comes close to the line"
-           : "High ground " + _wh + " reaches " +
-             (_ti.dropM > 0 ? "about " + _ti.dropM + " m " : "") + "above the line");
-      h += '<div class="tchero" id="schbox"><canvas id="schcv"></canvas>' +
-           '<div class="tccap"><div><span>' + (_here ? "You" : "That spot") +
-           '</span><b>inside this trunk</b></div>' +
-           '<div><span>' + esc(_db ? _db.text.replace(/ away$/, "") : "") +
-           '</span><b>nearest repeater</b></div></div></div>' +
-           '<div class="tcverdict' + (_ti.tier === 0 ? " ok" : "") + '"><b>' +
-           esc(_vb) + '</b><span>Height and position are measured. The ground ' +
-           'either side is drawn plain \u2014 this edition ships no site ' +
-           'coordinates, so the exact path cannot be traced.</span></div>';
+      var _grade = _ti.tier === 0 ? "Clear" : (_ti.tier === 1 ? "Marginal" : "Blocked");
+      h += '<div class="tcchart" id="schbox"><canvas id="schcv"></canvas></div>' +
+           '<div class="tcstats"><div><i>Distance</i>' +
+             esc(_db ? _db.text.replace(/^between /, "").replace(/ away$/, "") : "\u2014") +
+           '</div><div><i>High ground</i><b class="' + (_ti.tier ? "bad" : "ok") + '">' +
+             (_ti.dropM > 0 ? _ti.dropM + " m" : (_ti.tier ? "in the way" : "none")) +
+           '</b></div><div><i>Path</i><b class="' + (_ti.tier ? "bad" : "ok") + '">' +
+             _grade + '</b></div></div>' +
+           '<p class="tcnote2">The obstruction\u2019s height and where it sits are ' +
+           'measured. The ground either side is drawn plain \u2014 this edition ' +
+           'ships no site coordinates.</p>';
     } else {
       h += '<div class="tcin">' + (_here ? "You are inside this trunk."
-             : "You are in this trunk too, but not at the spot you tapped.") +
-           '</div>';
-    }
-    /* And where YOU are, if that is somewhere else in the same trunk. Two
-       different repeaters serve two ends of a long trunk, and the header chip
-       is already showing yours - say so here rather than let the card look
-       like it disagrees with it. */
-    if(!_here && _org){
-      var _mine = servingAt(_org.y, _org.x);
-      if(_mine && _mine.nearest && _mine.nearest.ch){
-        h += '<div class="tcyou">Where you are now, <b>' +
-             esc(_mine.nearest.site) + '</b> on <b>Ch ' + esc(_mine.nearest.ch) +
-             '</b> is closest.</div>';
-      }
+             : "You are in this trunk too, but not at the spot you tapped.") + '</div>';
     }
   } else if(_far){
     h += '<div class="tcfar">' + esc(kmBandText(_km)) +
          ' from you \u2014 out of range from here. Pick a closer area.</div>';
-  }
-
-  /* ---- the channel ------------------------------------------------- */
-  if(nr){
-    h += '<div class="tcdial"><div class="tcn"><small>Channel</small>' +
-         esc(nr.ch) + '</div><div class="tcm"><b>' + esc(nr.site) + '</b>' +
-         '<span>' + (_here ? "closest repeater to you"
-                            : "closest repeater to the spot you tapped") +
-         '</span></div></div>';
-    /* Contractors could not report a bad repeater at all - the button lives on
-       the site card and this edition has no site pins to open one from. It
-       goes directly under the channel it concerns, not at the foot of the
-       card: the sheet opens at a third of the screen and anything past the
-       repeater list is three gestures away from someone standing beside a
-       radio that will not answer. */
-    if(CONTRACTOR){
-      h += '<button class="tcreport" id="tcreport">' +
-           'Not getting through on Ch ' + esc(nr.ch) + '? Report it' +
-           '</button>';
-    }
-    /* No terrainBlock here. It carries its own heading, verdict, distance
-       box and drawing, so with the hero above it the card said everything
-       twice in two visual languages. The hero and the single verdict strip
-       now cover it, exactly as they do for a tapped area further away. */
-  } else if(sc.length){
-    h += '<div class="tcdial"><div class="tcn"><small>Channel</small>' +
-         esc(sc[0]) + '</div><div class="tcm"><b>' + esc(ss[0] || "") + '</b>' +
-         '<span>repeater in this area</span></div></div>';
-  } else {
-    h += '<div class="tcnone">No repeater could be matched here. Try the ' +
-         'strongest signal you can hear, or search the directory by name.</div>';
   }
 
   if(!named){
@@ -5991,7 +5987,6 @@ function openTrunkCard(a, ll){
                   '<a href="' + telHref(telDigits(a.p)) + '">' + esc(a.p) + '</a>', "mono") : "") +
        '</div>';
 
-  /* ---- every repeater in the trunk, two columns under the house heading */
   if(named && a.sites && a.sites.length){
     h += '<div class="dsect tclist"><div class="rule"></div><h5>Repeaters in this trunk</h5><ul>' +
          a.sites.map(function(n, si){
@@ -6005,6 +6000,7 @@ function openTrunkCard(a, ll){
 
   h += '<p class="tcfine">Site locations are not shown in this edition. The ' +
        'shaded area is the trunk\u2019s service area, not a coverage prediction.</p>';
+
   window.TCREPORT = (nr && nr.ch)
     ? { site: nr.site, ch: nr.ch, trunk: (named ? a.u : (RNAMES[a.g] || a.g)), phone: a.p || "" }
     : null;
@@ -6029,7 +6025,7 @@ function openTrunkCard(a, ll){
           "measured rises into the path. The ground is drawn plain \u2014 this " +
           "edition ships no site coordinates.";
       drawSchematic($("schcv"), {
-        tier: ti.tier, pos: ti.pos, dropM: ti.dropM, onDark: true,
+        tier: ti.tier, pos: ti.pos, dropM: ti.dropM, chart: true,
         km: db ? db.km : 0, site: (nr && nr.site) || ""
       });
     }, 430);
@@ -6040,30 +6036,31 @@ function openTrunkCard(a, ll){
     setTimeout(function(){
       var q = nearestAreaPoint(_org.y, _org.x, a.seg);
       var r = q ? losProfile(_org.y, _org.x, q[0], q[1], 0) : null;
-      var v = $("losv"), cv = $("loscv");
+      var cv = $("loscv");
       if(!r){
         var bx = $("losbox"); if(bx) bx.style.display = "none";
-        if(v) v.style.display = "none";
+        var sx = $("losstats"); if(sx) sx.style.display = "none";
         return;
       }
-      /* The far endpoint is the area boundary, not a mast, so the verdict is
+      /* The far endpoint is the area boundary, not a mast, so the numbers are
          about the GROUND in between - never "the path to the repeater is
-         clear", which is a claim this edition cannot make. */
-      if(v){
-        /* Round the numbers. 73.5 km and 1197 m imply a precision a coarse
-           DEM sampled every few hundred metres does not have. */
-        var km = Math.round(r.worstKm), m = Math.round(Math.abs(r.marginM) / 10) * 10;
-        var tail = '<span>Profile runs to the near edge of this area. The mast ' +
-                   'is further on, usually higher.</span>';
-        v.className = "tcverdict" + (r.grade === "blocked" ? "" : " ok");
-        v.innerHTML = (r.grade === "blocked"
-          ? "<b>A ridge " + km + " km out sits about " + m + " m above the line</b>"
-          : (r.grade === "marginal"
-             ? "<b>Marginal \u2014 the ground rises close to the line " + km + " km out</b>"
-             : "<b>Ground between you and this area is open</b>")) + tail;
+         clear", which is a claim this edition cannot make.
+         Rounded: 73.5 km and 1197 m imply a precision a coarse DEM sampled
+         every few hundred metres does not have. */
+      var m = Math.round(Math.abs(r.marginM) / 10) * 10;
+      var dm = $("losdrop"), gd = $("losgrade");
+      if(dm){
+        dm.className = r.grade === "clear" ? "ok" : "bad";
+        dm.textContent = r.grade === "clear" ? "none" : m + " m";
+      }
+      if(gd){
+        gd.className = r.grade === "clear" ? "ok" : "bad";
+        gd.textContent = r.grade === "clear" ? "Clear"
+                       : (r.grade === "marginal" ? "Marginal" : "Blocked");
       }
       window.LOSLAST = r;
-      if(cv) losDraw(cv, r, {onDark:true, h:(cv.clientHeight || 148) * 2});
+      if(cv) losDraw(cv, r, {chart:true, dropM:(r.grade === "clear" ? 0 : m),
+                             h:(cv.clientHeight || 96) * 2});
     }, 430);   /* AFTER the .38s sheet slide, never during it - decoding the
                   DEM and reading 840k pixels back mid-animation is what made
                   the card stutter. */
