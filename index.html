@@ -335,20 +335,29 @@ a{color:var(--blue);text-decoration:none}
    reading the map through the chip. Off to the side it covers a corner that
    is mostly ocean or blank margin, and it is narrower so it takes less of the
    width with it. */
+/* Was 74% of the width and 21px type, which put it across the middle of the top
+   edge and buried the trunks along the 60th parallel - the northernmost areas
+   sit at about 4.7% down the frame, directly under it. It is a status readout,
+   not a title: corner-sized, capped at 46% of the width, with the trunk line
+   dropped. The full name is one tap away in the sheet. */
 .chanhud{position:absolute;top:12px;left:12px;z-index:5;
-  display:flex;align-items:center;gap:10px;padding:8px 14px;border:0;
-  border-radius:var(--r2);background:#fff;cursor:pointer;
-  box-shadow:var(--e2);
-  font-family:inherit;max-width:calc(100% - 84px);
+  display:inline-flex;align-items:center;gap:7px;height:34px;
+  padding:0 14px 0 11px;border:0;border-radius:999px;
+  background:#fff;cursor:pointer;box-shadow:var(--e2);
+  font-family:inherit;max-width:46%;
   transition:background var(--t1) ease, transform .24s cubic-bezier(.32,.72,0,1)}
-.chanhud .cn{font-size:21px;font-weight:800;color:var(--navy);line-height:1;
+.chanhud .cn{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1;
   letter-spacing:.01em;flex:none}
 .chanhud .cs2{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
-.chanhud .cs2 b{font-size:11.5px;font-weight:700;color:var(--ink);line-height:1.25;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
-.chanhud .cs2 i{font-style:normal;font-size:10px;color:var(--muted);line-height:1.25;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.chanhud .cs2 b{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+/* the trunk name is the widest thing on the chip and it is already printed in
+   full in the hint under the map */
+.chanhud .cs2 i{display:none}
 .chanhud:active{background:#EDEFF2}
+/* Both floating pills sit at the same height and carry the same elevation, so
+   the two corners of the map read as one control set rather than two ideas. */
+.chanhud,.tripill{height:34px;border-radius:999px;box-shadow:var(--e2)}
 .chanhud{cursor:pointer}
 /* Layers belongs at the top, opposite the contextual chip: it changes what the
    map IS, so it does not belong in the bottom cluster with the things that
@@ -611,6 +620,12 @@ html.dark .rd.rd1{stroke:#E8AE3C}
    instead of 50.2%. The United States has been squashed by a third for as long
    as this map has existed, which is why a road crossing the border never met
    its continuation. All four numbers are now derived from the frame. */
+/* The relief stops at 48.3 and the inset starts there - two different hillshade
+   renders with no overlap, so nothing can be cross-faded. Fading one into the
+   other only produced a smear that drew the eye. The inset is now uniformly
+   blurred in the asset instead: south of the border reads as terrain, with no
+   detail to compare against Canada's. The change in sharpness IS the border,
+   which is honest - that is the edge of the data. No gradient here. */
 .southx{position:absolute;pointer-events:none;
   -webkit-user-drag:none;user-select:none;display:block;
   left:1.887%;    /* lon -134 within -134.4..-113.2 */
@@ -1330,7 +1345,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i>5 Sep &middot; 15:49</i></span>
+      <span class="hdver"><b>Beta 2</b><i>5 Sep &middot; 15:53</i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
