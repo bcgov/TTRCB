@@ -46,7 +46,7 @@
  * refresh path still works, but stale copies accumulate.
  */
 
-const CACHE = "rcb-04September2026";
+const CACHE = "rcb-05September2026";
 
 /* Everything needed to open the app with no signal at all. Keep this list in
  * step with the deployment set; a missing file here fails silently offline. */
@@ -56,7 +56,9 @@ const SHELL = [
   './rcb-b3.webmanifest',
   './manifest.webmanifest',
   './rcb-icon-b2-192.png',
-  './rcb-icon-b2-512.png'
+  './rcb-icon-b2-512.png',
+  './rcb-terrain.webp',
+  './rcb-southx.webp'
 ];
 
 /* version.json must NEVER be cached — it is the freshness signal itself. */
