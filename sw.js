@@ -46,7 +46,7 @@
  * refresh path still works, but stale copies accumulate.
  */
 
-const CACHE = "rcb-07September2026";
+const CACHE = "rcb-08September2026";
 
 /* Everything needed to open the app with no signal at all. Keep this list in
  * step with the deployment set; a missing file here fails silently offline. */
