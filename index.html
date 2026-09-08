@@ -1837,7 +1837,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 15:31</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 15:56</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -4625,6 +4625,9 @@ function renderWhereAmI(lat, lon){
     return;
   }
   var a = r.area, col = RC[a.g] || "#013366";
+  /* Remember it: a signal report raised from this screen is about the AREA,
+     not about any one repeater, and showSigSheet needs a subject. */
+  SIG.nxArea = a;
   if(!r.confident || !a.u){
     /* The traced outlines here overlap or disagree with the repeaters inside
        them. Name the region, which is solid, rather than a trunk we cannot
@@ -5098,6 +5101,18 @@ function sigDrawMapInner(o, st, cv, g, W, H, opt){
   }catch(_e){}
 }
 function showSigSheet(st){
+  /* st may be null. The Nearest screen reports "nothing gets through HERE",
+     which is about a place, not about one repeater - and passing null used to
+     throw on st.y below, killing the handler so the button did nothing at all.
+     Fall back to the trunk area: that is the true subject of the report. */
+  if(!st){
+    var ta = null;
+    try{ ta = SIG.nxArea || null; }catch(_a){}
+    st = { n: ta ? ("Trunk area: " + (ta.u || "unnamed")) : "No specific repeater",
+           u: ta ? (ta.u || "") : "",
+           v: (ta && ta.v && ta.v.length) ? ta.v.join(", ") : "",
+           k: "" };
+  }
   SIG.site = st; SIG.issue = "";
   /* A contractor-edition report has no site position - this build ships none.
      The techs do not need one: they know where their own repeaters are. What
