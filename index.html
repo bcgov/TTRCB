@@ -1606,6 +1606,32 @@ html,body{overscroll-behavior-y:none}
   padding:10px 12px;font:inherit;font-size:16px;background:var(--surface);
   color:var(--ink);resize:vertical}
 .sigbtns{display:flex;gap:10px;margin-top:14px}
+.sigstep{background:var(--surface,#fff);border:.5px solid var(--line,#e3e6ea);
+  border-radius:12px;padding:2px 13px 14px;margin-top:14px}
+.sigstep .siglbl{display:flex;align-items:center;gap:8px}
+.sigstep .siglbl b{display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:50%;background:var(--navy);color:#fff;
+  font-size:10.5px;font-weight:800;flex:none}
+.sigopt{font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)}
+.sigmic{display:inline-block;width:9px;height:14px;border-radius:5px;
+  background:currentColor;margin-right:9px;vertical-align:-2px;position:relative}
+.sigmic:after{content:"";position:absolute;left:-4px;bottom:-5px;width:17px;height:8px;
+  border:2px solid currentColor;border-top:none;border-radius:0 0 9px 9px}
+.sigrec{margin-top:11px}
+.sigaddr{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:12.5px;
+  color:var(--muted);justify-content:center;flex-wrap:wrap}
+.sigaddr b{color:var(--navy);font-weight:700}
+.sigcopyaddr{border:.5px solid var(--line,#d8dde3);background:none;border-radius:7px;
+  padding:3px 9px;font-family:inherit;font-size:12px;font-weight:700;color:var(--navy)}
+.sigrecbtn{width:100%;padding:14px;border-radius:12px;border:2px solid var(--navy);
+  background:#fff;color:var(--navy);font-family:inherit;font-size:15px;font-weight:800;
+  -webkit-user-select:none;user-select:none;touch-action:none}
+.sigrecbtn.rec{background:var(--advisory);border-color:var(--advisory);color:#fff}
+.sigrecmeta{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.35}
+.siglvl{display:flex;align-items:flex-end;gap:3px;height:34px;margin-top:9px}
+.siglvl span{flex:1;background:var(--navy);border-radius:2px;height:6%;
+  transition:height 70ms linear}
+.siglvl.hot span{background:var(--advisory)}
 .sigbtns .b{flex:1;display:flex;align-items:center;justify-content:center;height:46px;
   border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;
   border:1.5px solid var(--navy);cursor:pointer;font-family:inherit}
@@ -1837,7 +1863,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 15:56</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 16:20</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -2159,28 +2185,54 @@ html,body{overscroll-behavior-y:none}
       <div class="lv" id="siglosv"></div>
       <canvas id="siglocv"></canvas>
     </div>
-    <h4 class="siglbl">What happened?</h4>
-    <div class="sigopts" id="sigopts">
-      <button data-i="No answer tone">No answer tone</button>
-      <button data-i="Busy / no channel">Busy / no channel</button>
-      <button data-i="Dropped mid-call">Dropped mid-call</button>
-      <button data-i="Weak or noisy">Weak / noisy</button>
-      <button data-i="Other">Other</button>
+    <div class="sigstep">
+      <h4 class="siglbl"><b>1</b> What happened?</h4>
+      <div class="sigopts" id="sigopts">
+        <button data-i="No answer tone">No answer tone</button>
+        <button data-i="Busy / no channel">Busy / no channel</button>
+        <button data-i="Dropped mid-call">Dropped mid-call</button>
+        <button data-i="Weak or noisy">Weak / noisy</button>
+        <button data-i="Other">Other</button>
+      </div>
+
+      <h4 class="siglbl"><b>2</b> Does it happen every time?</h4>
+      <div class="sigopts" id="sigrepeat">
+        <button data-i="Every time">Every time</button>
+        <button data-i="Sometimes">Sometimes</button>
+        <button data-i="First time here">First time</button>
+      </div>
+
+      <h4 class="siglbl"><b>3</b> Which radio</h4>
+      <div class="sigopts" id="sigradio">
+        <button data-i="Mobile (vehicle)">Mobile</button>
+        <button data-i="Handheld">Handheld</button>
+        <button data-i="Base station">Base</button>
+      </div>
     </div>
-    <h4 class="siglbl">Notes <span style="font-weight:400;color:var(--muted)">&mdash; optional, everything else is filled in</span></h4>
-    <textarea id="signotes" rows="3" placeholder="What you heard, what you were doing, weather&hellip;"></textarea>
+
+    <div class="sigstep">
+      <h4 class="siglbl"><b>4</b> Anything to add? <span class="sigopt">both optional</span></h4>
+      <textarea id="signotes" rows="3" placeholder="What you heard, what you were doing, weather&hellip;"></textarea>
+      <div class="sigrec">
+        <button class="sigrecbtn" id="sigrecbtn"><i class="sigmic"></i>Hold to record the radio</button>
+        <div class="siglvl" id="siglvl" style="display:none"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="sigrecmeta" id="sigrecmeta">Hold your radio speaker to the phone, then hold the button. It records the channel, not you.</div>
+        <audio id="sigrecplay" controls style="display:none;width:100%;margin-top:8px"></audio>
+        <button class="sigmail" id="sigrecclear" style="display:none;color:var(--advisory-text)">Delete the recording</button>
+      </div>
+    </div>
+
     <div class="sigbtns">
-      <a class="b pri" id="sigmailbtn" style="flex:1">Send to radio techs</a>
+      <button class="b pri" id="sigsend" style="flex:1">Send to radio techs</button>
     </div>
-    <button class="sigmail" id="sigsend">Add the map sheet &mdash; a few more taps</button>
-    <button class="sigmail" id="sigcopy" style="font-weight:600;text-decoration:none;color:var(--muted);padding-top:2px">Copy the report text instead</button>
+    <div class="sigaddr">Send to <b>highwaysradiosupport@gov.bc.ca</b><button class="sigcopyaddr" id="sigcopyaddr">Copy</button></div>
 
     <div class="nfine" style="border-top:none;padding-top:0">
-      <b>Send to radio techs</b> opens a message already addressed and written &mdash;
-      just press send. It goes when you next have signal.<br>
-      <b>Add the map sheet</b> attaches a page with the map, terrain profile and nearest
-      alternative sites. Android will ask which app to use and you type the address yourself,
-      so it takes longer &mdash; worth it when the problem is hard to describe.
+      This builds one file holding the map, the terrain profile, everything you
+      answered above and the recording, then hands it to your phone to send.
+      Pick your email app when Android asks, and type the address above &mdash;
+      a web page is not allowed to fill it in for you. It goes when you next
+      have signal.
       <b>Beta 2 &middot; build 08 September 2026</b></div>
   </div>
 </div>
@@ -5113,7 +5165,8 @@ function showSigSheet(st){
            v: (ta && ta.v && ta.v.length) ? ta.v.join(", ") : "",
            k: "" };
   }
-  SIG.site = st; SIG.issue = "";
+  SIG.site = st; SIG.issue = ""; SIG.repeatability = ""; SIG.radiotype = "";
+  try{ sigAudClear(); }catch(_e){}
   /* A contractor-edition report has no site position - this build ships none.
      The techs do not need one: they know where their own repeaters are. What
      they need is where the REPORTER was, which trunk and channel, and what the
@@ -5583,6 +5636,9 @@ function sigPlainBody(){
   var noXY = (typeof st.y !== "number" || typeof st.x !== "number");
   L.push("SIGNAL ISSUE \u2014 " + st.n);
   L.push("Problem: " + (SIG.issue || "not specified"));
+  if(SIG.repeatability) L.push("Happens: " + SIG.repeatability);
+  if(SIG.radiotype) L.push("Radio: " + SIG.radiotype);
+  if(SIGAUD && SIGAUD.blob) L.push("Voice note: " + SIGAUD.secs + "s, inside the HTML report");
   L.push("Reported: " + new Date().toLocaleString());
   L.push("");
   L.push("SITE");
@@ -5647,6 +5703,229 @@ function sigPlainBody(){
   return L.join("\n");
 }
 
+
+/* ---------- extra intake: repeatability and radio type ---------- */
+function sigOptGroup(id, key){
+  var el = $(id); if(!el) return;
+  el.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    el.querySelectorAll("button").forEach(function(x){ x.classList.remove("on"); });
+    b.classList.add("on"); SIG[key] = b.dataset.i;
+  });
+}
+sigOptGroup("sigrepeat", "repeatability");
+sigOptGroup("sigradio", "radiotype");
+
+/* ---------- voice note ----------
+   Press and hold, not a start/stop toggle. Holding caps the length physically,
+   makes recording a deliberate act, and makes an accidental open mic in a
+   vehicle very unlikely. Sixty second ceiling regardless. Nothing is written
+   to storage: the clip lives in memory and dies with the sheet. */
+var SIGAUD = { rec:null, chunks:[], blob:null, url:null, mime:"", secs:0, t0:0, tick:null, cap:null };
+
+function sigAudMime(){
+  var want = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"];
+  for(var i=0;i<want.length;i++){
+    try{ if(window.MediaRecorder && MediaRecorder.isTypeSupported(want[i])) return want[i]; }catch(_e){}
+  }
+  return "";
+}
+function sigAudExt(m){
+  if(m.indexOf("mp4") >= 0) return "m4a";
+  if(m.indexOf("ogg") >= 0) return "oga";
+  return "weba";
+}
+function sigAudClear(){
+  if(SIGAUD.url){ try{ URL.revokeObjectURL(SIGAUD.url); }catch(_e){} }
+  SIGAUD.blob = null; SIGAUD.url = null; SIGAUD.secs = 0;
+  var p = $("sigrecplay"), c = $("sigrecclear");
+  if(p){ p.style.display = "none"; p.removeAttribute("src"); }
+  if(c) c.style.display = "none";
+  $("sigrecmeta").textContent =
+    "Nothing recorded. Hold your radio speaker to the phone, then hold this button.";
+}
+function sigAudStart(){
+  if(SIGAUD.rec || SIGAUD.blob) return;
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){
+    $("sigrecmeta").textContent = "This phone cannot record from the browser. Everything else in the report still works.";
+    return;
+  }
+  var mime = sigAudMime();
+  /* This clip is RADIO NOISE, not speech, and the browser defaults are all
+     wrong for it. Noise suppression exists to remove steady hiss - it would
+     delete the very fault being reported. Auto gain would lift a weak, noisy
+     signal until it sounded healthy, so a tech could not judge level. Echo
+     cancellation adapts to a far-end voice that does not exist here and
+     gates unpredictably. All three off, explicitly. 16 kHz is ample: radio
+     audio is band-limited well below that, and it keeps the file small. */
+  navigator.mediaDevices.getUserMedia({audio:{
+    echoCancellation:false, noiseSuppression:false, autoGainControl:false,
+    channelCount:1, sampleRate:16000
+  }}).then(function(stream){
+    try{
+      SIGAUD.mime = mime;
+      SIGAUD.rec = mime
+        ? new MediaRecorder(stream, {mimeType:mime, audioBitsPerSecond:96000})
+        : new MediaRecorder(stream, {audioBitsPerSecond:96000});
+      SIGAUD.chunks = [];
+      SIGAUD.rec.ondataavailable = function(ev){ if(ev.data && ev.data.size) SIGAUD.chunks.push(ev.data); };
+      SIGAUD.rec.onstop = function(){
+        stream.getTracks().forEach(function(t){ t.stop(); });
+        var type = SIGAUD.rec.mimeType || SIGAUD.mime || "audio/webm";
+        SIGAUD.blob = new Blob(SIGAUD.chunks, {type:type});
+        SIGAUD.mime = type;
+        SIGAUD.rec = null;
+        if(SIGAUD.blob.size < 900){ sigAudClear(); $("sigrecmeta").textContent = "Too short to keep \u2014 hold the button for a second or two."; return; }
+        SIGAUD.url = URL.createObjectURL(SIGAUD.blob);
+        var p = $("sigrecplay");
+        p.src = SIGAUD.url; p.style.display = "block";
+        $("sigrecclear").style.display = "block";
+        $("sigrecmeta").textContent =
+          SIGAUD.secs + "s \u00b7 " + Math.round(SIGAUD.blob.size/1024) + " KB \u00b7 " +
+          (SIGAUD.peak < 0.06 ? "almost nothing was picked up \u2014 worth doing again closer to the speaker"
+           : SIGAUD.peak > 0.95 ? "loud enough to be clipping \u2014 move the phone back a little"
+           : "level looks good") + ".";
+      };
+      try{
+        var AC = window.AudioContext || window.webkitAudioContext;
+        SIGAUD.ac = new AC();
+        var src = SIGAUD.ac.createMediaStreamSource(stream);
+        SIGAUD.an = SIGAUD.ac.createAnalyser();
+        SIGAUD.an.fftSize = 512;
+        src.connect(SIGAUD.an);
+        SIGAUD.buf = new Uint8Array(SIGAUD.an.frequencyBinCount);
+        SIGAUD.peak = 0;
+        $("siglvl").style.display = "flex";
+        sigMeter();
+      }catch(_e){}
+      SIGAUD.rec.start();
+      SIGAUD.t0 = Date.now();
+      $("sigrecbtn").classList.add("rec");
+      $("sigrecbtn").textContent = "Recording\u2026 release to stop";
+      SIGAUD.tick = setInterval(function(){
+        SIGAUD.secs = Math.round((Date.now()-SIGAUD.t0)/1000);
+        $("sigrecmeta").textContent = "Recording \u2014 " + SIGAUD.secs + "s of 30";
+      }, 250);
+      SIGAUD.cap = setTimeout(sigAudStop, 30000);
+    }catch(err){
+      try{ stream.getTracks().forEach(function(t){ t.stop(); }); }catch(_e){}
+      $("sigrecmeta").textContent = "Could not start recording: " + String(err).slice(0,80);
+    }
+  })["catch"](function(){
+    $("sigrecmeta").textContent = "Microphone permission was refused. The rest of the report is unaffected.";
+  });
+}
+/* The bars are not decoration. Holding a handset to a phone is a blind act -
+   without a meter you cannot tell whether the clip caught the fault or thirty
+   seconds of engine. The peak is kept so the report can say so afterwards. */
+function sigMeter(){
+  if(!SIGAUD.an){ return; }
+  SIGAUD.an.getByteTimeDomainData(SIGAUD.buf);
+  var mx = 0;
+  for(var i=0;i<SIGAUD.buf.length;i++){
+    var d = Math.abs(SIGAUD.buf[i]-128); if(d>mx) mx = d;
+  }
+  var lvl = Math.min(1, mx/110);
+  if(lvl > SIGAUD.peak) SIGAUD.peak = lvl;
+  var bars = $("siglvl").children, n = bars.length;
+  for(var b=0;b<n;b++){
+    var jitter = 0.55 + 0.45*Math.abs(Math.sin((Date.now()/90)+(b*1.7)));
+    bars[b].style.height = Math.max(6, Math.round(lvl*jitter*100)) + "%";
+  }
+  $("siglvl").classList.toggle("hot", lvl > 0.92);
+  SIGAUD.raf = requestAnimationFrame(sigMeter);
+}
+function sigAudStop(){
+  clearInterval(SIGAUD.tick); clearTimeout(SIGAUD.cap);
+  try{ cancelAnimationFrame(SIGAUD.raf); }catch(_e){}
+  try{ if(SIGAUD.ac) SIGAUD.ac.close(); }catch(_e){}
+  SIGAUD.an = null; SIGAUD.ac = null;
+  $("siglvl").style.display = "none"; $("siglvl").classList.remove("hot");
+  SIGAUD.secs = Math.max(1, Math.round((Date.now()-SIGAUD.t0)/1000));
+  $("sigrecbtn").classList.remove("rec");
+  $("sigrecbtn").textContent = "Hold to record";
+  if(SIGAUD.rec && SIGAUD.rec.state !== "inactive"){ try{ SIGAUD.rec.stop(); }catch(_e){} }
+}
+(function(){
+  var b = $("sigrecbtn"); if(!b) return;
+  ["pointerdown"].forEach(function(ev){ b.addEventListener(ev, function(e){ e.preventDefault(); sigAudStart(); }); });
+  ["pointerup","pointercancel","pointerleave"].forEach(function(ev){ b.addEventListener(ev, function(e){ e.preventDefault(); sigAudStop(); }); });
+  $("sigrecclear").addEventListener("click", sigAudClear);
+})();
+
+/* ---------- the report document ----------
+   One self-contained HTML file. The map sheet goes in as a data URI, the voice
+   note as a second one inside an <audio> element, and the numbers go in as real
+   text so a technician can copy them. A PNG could carry none of that. */
+function sigHtmlReport(pngUrl, audUrl, cb){
+  var st = SIG.site, o = SIG.origin;
+  function row(k,v){ return v ? '<tr><th>'+esc(k)+'</th><td>'+esc(String(v))+'</td></tr>' : ''; }
+  var when = new Date();
+  var H = [];
+  H.push('<!doctype html><html lang="en"><head><meta charset="utf-8">');
+  H.push('<meta name="viewport" content="width=device-width,initial-scale=1">');
+  H.push('<title>Signal issue \u2014 '+esc(st.n)+'</title><style>');
+  H.push('body{font-family:system-ui,Segoe UI,Roboto,sans-serif;margin:0;padding:18px;color:#1a1a1a;background:#fff;max-width:760px}');
+  H.push('h1{font-size:19px;margin:0 0 2px;color:#013366}h2{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:#013366;margin:22px 0 8px;border-bottom:2px solid #FCBA19;padding-bottom:4px}');
+  H.push('table{border-collapse:collapse;width:100%;font-size:14px}th{text-align:left;width:38%;padding:5px 8px 5px 0;color:#555;font-weight:600;vertical-align:top}td{padding:5px 0;vertical-align:top}');
+  H.push('tr+tr th,tr+tr td{border-top:1px solid #e6e6e6}img{max-width:100%;border:1px solid #ddd;border-radius:6px}');
+  H.push('.sub{color:#666;font-size:13px;margin:0 0 4px}.note{white-space:pre-wrap;background:#f6f8fa;border-left:3px solid #013366;padding:10px 12px;border-radius:0 6px 6px 0;font-size:14px}');
+  H.push('.foot{margin-top:26px;border-top:1px solid #e6e6e6;padding-top:10px;color:#777;font-size:11.5px}audio{width:100%;margin-top:6px}');
+  H.push('</style></head><body>');
+  H.push('<h1>Signal issue \u2014 '+esc(st.n)+'</h1>');
+  H.push('<p class="sub">'+esc(when.toLocaleString())+'</p>');
+
+  H.push('<h2>What was reported</h2><table>');
+  H.push(row("Problem", SIG.issue || "not specified"));
+  H.push(row("Happens", SIG.repeatability));
+  H.push(row("Radio", SIG.radiotype));
+  H.push('</table>');
+  var notes = ($("signotes") && $("signotes").value || "").trim();
+  if(notes) H.push('<h2>Notes from the reporter</h2><div class="note">'+esc(notes)+'</div>');
+
+  if(audUrl){
+    H.push('<h2>Voice note</h2>');
+    H.push('<audio controls preload="metadata" src="'+audUrl+'"></audio>');
+    H.push('<p class="sub">'+SIGAUD.secs+' seconds of radio audio, recorded at the time of the report. '+
+           'Noise suppression, echo cancellation and automatic gain were all disabled, so what '+
+           'you hear is what the phone heard. Peak level '+Math.round(SIGAUD.peak*100)+'%.</p>');
+  }
+
+  H.push('<h2>Repeater</h2><table>');
+  H.push(row("Name", st.n));
+  H.push(row("Trunk", st.u));
+  H.push(row("Channel", st.v));
+  H.push(row("Site code", st.k));
+  if(typeof st.y === "number") H.push(row("Position", st.y.toFixed(5)+", "+st.x.toFixed(5)));
+  H.push('</table>');
+
+  H.push('<h2>Where the reporter was</h2><table>');
+  if(o){
+    H.push(row("Position", o.y.toFixed(5)+", "+o.x.toFixed(5)));
+    if(typeof o.a === "number") H.push(row("GPS accuracy", "\u00b1"+Math.round(o.a)+" m"));
+    if(o.l) H.push(row("Nearest place", o.l));
+    try{ H.push(row("Ground elevation", Math.round(elevAt(o.y,o.x))+" m")); }catch(_e){}
+    try{
+      var ti = terrainAt(o.y,o.x);
+      if(ti && ti.text) H.push(row("Terrain", ti.text));
+    }catch(_e){}
+  } else {
+    H.push(row("Position", "not captured"));
+  }
+  H.push('</table>');
+
+  if(pngUrl){
+    H.push('<h2>Map and terrain profile</h2>');
+    H.push('<img alt="Report sheet" src="'+pngUrl+'">');
+  }
+
+  H.push('<div class="foot">Generated by the Radio Call Book offline directory. ');
+  H.push('Terrain figures are computed from stored elevation data and take no account of ');
+  H.push('closures, vegetation, antenna height or weather. Build 08 September 2026.</div>');
+  H.push('</body></html>');
+  cb(H.join(""));
+}
+
 function sigMailto(){
   var st = SIG.site;
   return "mailto:" + "highwaysradiosupport@gov.bc.ca" +
@@ -5661,34 +5940,77 @@ $("sigopts").addEventListener("click", function(e){
 });
 function sigSyncHref(){
   try{
-    var a = $("sigsend");
-    if(!a || !SIG.site) return;
-    /* keep the mailto on the href so a long-press / "open in new tab" still
-       works, but the click path builds and attaches the report sheet */
-    a.setAttribute("href", sigMailto());
+    /* Nothing to sync any more: there is one button and it always builds the
+       full report. sigMailto() survives only as the fallback when the share
+       sheet refuses the file, and as the plain-text copy. */
+    return;
   }catch(err){
     toast("report draft error: " + String(err).slice(0, 120));
   }
 }
-$("sigmailbtn").addEventListener("click", function(e){
-  e.preventDefault();
-  if(!SIG.site){ return; }
-  location.href = sigMailto();
-});
+
 $("sigsend").addEventListener("click", function(e){
   e.preventDefault();
-  sigShareSheet();
+  sigShareHtml();
 });
+/* Build the map sheet, inline it and the voice note into one HTML file, and
+   hand the file to the share sheet. Falls back to a download plus the mailto,
+   which is the same shape the PNG path already used. */
+function blobToDataUrl(b, cb){
+  if(!b){ cb(null); return; }
+  var fr = new FileReader();
+  fr.onload = function(){ cb(fr.result); };
+  fr.onerror = function(){ cb(null); };
+  fr.readAsDataURL(b);
+}
+function sigShareHtml(){
+  var st = SIG.site; if(!st) return;
+  var btn = $("sigsend"), was = btn.textContent;
+  btn.textContent = "Building the report\u2026";
+  setTimeout(function(){
+    sigBuildSheet(function(cv){
+      var png = null;
+      try{ png = cv ? cv.toDataURL("image/png") : null; }catch(_e){}
+      blobToDataUrl(SIGAUD.blob, function(aud){
+        sigHtmlReport(png, aud, function(html){
+          btn.textContent = was;
+          var slug = String(st.n).replace(/[^A-Za-z0-9]+/g,"-").toLowerCase();
+          var name = "signal-report-" + slug + "-" + new Date().toISOString().slice(0,10) + ".html";
+          var blob = new Blob([html], {type:"text/html"});
+          var file = null;
+          try{ file = new File([blob], name, {type:"text/html"}); }catch(_e){}
+          var txt = null;
+          try{ txt = new File([new Blob([sigPlainBody()],{type:"text/plain"})],
+                              name.replace(/\.html$/,".txt"), {type:"text/plain"}); }catch(_e){}
+          var files = txt ? [file, txt] : [file];
+          if(file && navigator.canShare && navigator.canShare({files:files}) && navigator.share){
+            navigator.share({ files: files,
+                              title: "Signal issue \u2014 " + st.n,
+                              text: sigPlainBody() })["catch"](function(){});
+            return;
+          }
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(blob); a.download = name;
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+          toast("Report saved to Downloads \u2014 attach it to the email.");
+          setTimeout(function(){ location.href = sigMailto(); }, 900);
+        });
+      });
+    });
+  }, 30);
+}
 $("signotes").addEventListener("input", function(){
   clearTimeout(window._sigT); window._sigT = setTimeout(sigSyncHref, 350);
 });
-$("sigcopy").addEventListener("click", function(){
-  var body = decodeURIComponent(sigMailto().split("&body=")[1]);
+$("sigcopyaddr").addEventListener("click", function(){
   var self = this;
-  try{ navigator.clipboard.writeText(body).then(function(){
-    self.textContent = "Copied"; setTimeout(function(){ self.textContent = "Copy report"; }, 1600);
-  }); }catch(_){ toast("Couldn\u2019t copy here \u2014 use the email button."); }
+  try{ navigator.clipboard.writeText("highwaysradiosupport@gov.bc.ca").then(function(){
+    self.textContent = "Copied";
+    setTimeout(function(){ self.textContent = "Copy"; }, 2000);
+  }); }catch(_e){ toast("Could not copy the address"); }
 });
+
 $("sigback").addEventListener("click", function(){ $("sigsheet").classList.remove("on"); });
 
 var curSite = null;
