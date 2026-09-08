@@ -1863,7 +1863,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 16:20</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 16:27</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -5654,7 +5654,7 @@ function sigPlainBody(){
     L.push("CALLER");
     L.push("  Position: " + o.y.toFixed(5) + ", " + o.x.toFixed(5) +
            (typeof o.a === "number" ? "  (\u00b1" + Math.round(o.a) + " m)" : ""));
-    if(o.l) L.push("  Nearest place: " + o.l);
+    if(o.l && o.l !== "your current location") L.push("  Nearest place: " + o.l);
     L.push("  Ground elevation: " + Math.round(elevAt(o.y, o.x)) + " m");
     if(noXY){
       var _db = distBandAt(o.y, o.x), _ti = terrainAt(o.y, o.x);
@@ -5870,10 +5870,15 @@ function sigHtmlReport(pngUrl, audUrl, cb){
   H.push('table{border-collapse:collapse;width:100%;font-size:14px}th{text-align:left;width:38%;padding:5px 8px 5px 0;color:#555;font-weight:600;vertical-align:top}td{padding:5px 0;vertical-align:top}');
   H.push('tr+tr th,tr+tr td{border-top:1px solid #e6e6e6}img{max-width:100%;border:1px solid #ddd;border-radius:6px}');
   H.push('.sub{color:#666;font-size:13px;margin:0 0 4px}.note{white-space:pre-wrap;background:#f6f8fa;border-left:3px solid #013366;padding:10px 12px;border-radius:0 6px 6px 0;font-size:14px}');
-  H.push('.foot{margin-top:26px;border-top:1px solid #e6e6e6;padding-top:10px;color:#777;font-size:11.5px}audio{width:100%;margin-top:6px}');
+  H.push('.openme{background:#FFF6F2;border-left:3px solid #F24C27;color:#C84507;padding:9px 12px;font-size:13px;margin:12px 0 0;border-radius:0}.foot{margin-top:26px;border-top:1px solid #e6e6e6;padding-top:10px;color:#777;font-size:11.5px}audio{width:100%;margin-top:6px}');
   H.push('</style></head><body>');
   H.push('<h1>Signal issue \u2014 '+esc(st.n)+'</h1>');
   H.push('<p class="sub">'+esc(when.toLocaleString())+'</p>');
+  /* Outlook's reading pane strips data: URIs and will not render <audio>, so a
+     technician previewing the attachment sees an empty box and concludes the
+     map and the recording failed. They did not - the file has to be opened. */
+  H.push('<p class="openme">Save this file and open it in a browser. '+
+         'An email preview will not show the map or play the recording.</p>');
 
   H.push('<h2>What was reported</h2><table>');
   H.push(row("Problem", SIG.issue || "not specified"));
@@ -5891,8 +5896,9 @@ function sigHtmlReport(pngUrl, audUrl, cb){
            'you hear is what the phone heard. Peak level '+Math.round(SIGAUD.peak*100)+'%.</p>');
   }
 
-  H.push('<h2>Repeater</h2><table>');
-  H.push(row("Name", st.n));
+  var isArea = String(st.n || "").indexOf("Trunk area:") === 0;
+  H.push('<h2>'+(isArea ? 'Trunk area' : 'Repeater')+'</h2><table>');
+  if(!isArea) H.push(row("Name", st.n));
   H.push(row("Trunk", st.u));
   H.push(row("Channel", st.v));
   H.push(row("Site code", st.k));
@@ -5903,7 +5909,7 @@ function sigHtmlReport(pngUrl, audUrl, cb){
   if(o){
     H.push(row("Position", o.y.toFixed(5)+", "+o.x.toFixed(5)));
     if(typeof o.a === "number") H.push(row("GPS accuracy", "\u00b1"+Math.round(o.a)+" m"));
-    if(o.l) H.push(row("Nearest place", o.l));
+    if(o.l && o.l !== "your current location") H.push(row("Nearest place", o.l));
     try{ H.push(row("Ground elevation", Math.round(elevAt(o.y,o.x))+" m")); }catch(_e){}
     try{
       var ti = terrainAt(o.y,o.x);
