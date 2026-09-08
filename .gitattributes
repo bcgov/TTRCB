@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.png binary
+*.webp binary
+*.ico binary
+*.webmanifest text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.txt text eol=lf

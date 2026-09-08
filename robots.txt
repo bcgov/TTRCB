@@ -1,3 +1,8 @@
 # Internal ministry tool. Not for search indexing.
+#
+# NOTE: on the current host this file has no effect. Crawlers
+# read robots.txt only from https://bcgov.github.io/robots.txt,
+# which this repository does not control. Exclusion is enforced
+# by the noindex meta tag in index.html instead.
 User-agent: *
 Disallow: /
