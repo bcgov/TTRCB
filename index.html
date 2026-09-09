@@ -1673,6 +1673,14 @@ html,body{overscroll-behavior-y:none}
 .sigmic:after{content:"";position:absolute;left:-4px;bottom:-5px;width:17px;height:8px;
   border:2px solid currentColor;border-top:none;border-radius:0 0 9px 9px}
 .sigrec{margin-top:11px}
+.tripbg{border:1px solid var(--line,#dfe3e8);border-radius:12px;padding:12px 13px;margin:12px 0 4px}
+.tripbgt{font-size:14px;font-weight:800;color:var(--navy)}
+.tripbgp{font-size:13px;line-height:1.45;color:var(--muted);margin:5px 0 10px}
+.tripbgb{display:flex;align-items:center;gap:9px;width:100%;padding:11px;border-radius:10px;
+  border:2px solid var(--navy);background:#fff;color:var(--navy);
+  font-family:inherit;font-size:14px;font-weight:800;justify-content:center}
+.tripbgb.on{background:var(--navy);color:#fff}
+.tripbgs{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
 .glance{position:fixed;inset:0;z-index:120;background:var(--navy);color:#fff;
   display:none;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;padding:20px;transition:opacity .5s ease}
@@ -1939,7 +1947,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 20:07</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 21:25</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -2101,6 +2109,14 @@ html,body{overscroll-behavior-y:none}
       moment the screen sleeps &mdash; so trip mode asks the phone to keep the
       screen awake while it&rsquo;s running, and lets go when you stop it.
       Mount the phone, or plug it in for longer drives.</p>
+      <div class="tripbg" id="tripbgbox">
+        <div class="tripbgt">Or let it run with the screen off</div>
+        <p class="tripbgp">Android can keep following you with the screen dark,
+        but only by holding the phone&rsquo;s audio &mdash; so <b>music and
+        podcasts stop</b> for the whole trip. In return the channel shows on
+        your lock screen. Off unless you choose it, and it stays how you leave it.</p>
+        <button class="tripbgb" id="tripbgb"><span class="tripbgs" id="tripbgs">Off</span><span id="tripbgl">Use it</span></button>
+      </div>
       <div class="tripsay">
         &ldquo;Trunk change. Nearest repeater Promontory, Nicola Trunk, channel&nbsp;4.&rdquo;
       </div>
@@ -7847,7 +7863,28 @@ function tripFix(p){
 }
 /* First time someone taps Trip mode, explain it before starting. After that the
    pill just works; press and hold to read the explanation again. */
-function openTripHelp(){ $("tripsheet").classList.add("on"); }
+function openTripHelp(){ $("tripsheet").classList.add("on"); tripBgBox(); }
+
+/* The screen-off choice lives here, in the sheet that opens by itself the first
+   time anyone starts a trip. That is when they are thinking about how trip mode
+   works, and it is an explanation rather than a hidden gesture nobody finds.
+   Writes the same setting the cog does. */
+function tripBgBox(){
+  var b = $("tripbgb"), s = $("tripbgs"), l = $("tripbgl"), box = $("tripbgbox");
+  if(!b || !box) return;
+  if(IS_IOS){ box.style.display = "none"; return; }
+  var on = lsGet("rcbTripBg") === "1";
+  b.classList.toggle("on", on);
+  s.textContent = on ? "On" : "Off";
+  l.textContent = on ? "Music stops while a trip runs" : "Use it";
+}
+if($("tripbgb")) $("tripbgb").addEventListener("click", function(){
+  var on = lsGet("rcbTripBg") === "1";
+  lsSet("rcbTripBg", on ? "0" : "1");
+  tripBgBox();
+  try{ tripBgApply(); }catch(_e){}
+});
+
 $("tsback").addEventListener("click", function(){ $("tripsheet").classList.remove("on"); });
 $("tsnot").addEventListener("click", function(){ $("tripsheet").classList.remove("on"); });
 $("tsgo").addEventListener("click", function(){
@@ -7884,6 +7921,7 @@ $("mztrip").addEventListener("click", function(e){
   }, true);
   pill.addEventListener("contextmenu", function(e){ e.preventDefault(); });
 })();
+
 /* One way out of trip mode, so a failure cannot leave half of it running. */
 /* Speak the channel for wherever we are right now, without waiting for a
    boundary crossing. Used when an iPhone comes back to the foreground, where
@@ -7940,8 +7978,19 @@ function glanceSync(){
     lbl.textContent = "TRIP MODE";
     n.textContent = "\u2014"; n.classList.add("word");
   }
-  $("gltrunk").textContent = (sv && sv.area && sv.area.u) ? sv.area.u
-                           : (o ? "outside a mapped trunk" : "waiting for a fix");
+  /* servingAt gives the nearest site but not reliably the area, so asking it
+     for both produced a screen reading "Channel 7, Helmcken, outside a mapped
+     trunk" - three facts that cannot all be true. trunkAt is what the map
+     itself uses to name the area; ask that, and only fall back when it has
+     nothing either. */
+  var area = null;
+  if(o){
+    try{ var ta = trunkAt(o.y, o.x); if(ta && ta.area) area = ta.area.u || null; }catch(_e){}
+    if(!area && sv && sv.area && sv.area.u) area = sv.area.u;
+  }
+  $("gltrunk").textContent = area ? area
+    : (o ? (num ? "trunk not named for this area" : "outside a mapped trunk")
+         : "waiting for a fix");
   $("glsite").textContent = (sv && sv.nearest && sv.nearest.site) ? sv.nearest.site : "";
   $("glfoot").textContent = TRIP.on
     ? (IS_IOS ? "Screen stays on \u2014 iPhone cannot follow you with it off"
@@ -8038,6 +8087,15 @@ $("mztrip").addEventListener("click", function(){
   }
   var self = this;
   TRIP.on = true; self.classList.add("on");
+  /* Screen-off is a sticky setting, not a per-trip gesture: someone who never
+     plays music wants it every time. Honour it - but say out loud that it is
+     on, at the moment it starts costing them their audio. Discovering that in
+     a car three weeks later is how this went wrong the first time. */
+  if(lsGet("rcbTripBg") === "1" && !IS_IOS){
+    setTimeout(function(){
+      toast("Running with the screen off \u2014 music and podcasts stop until the trip ends.");
+    }, 700);
+  }
   try{ tripWake(true); }catch(_e){}
   try{ chanChip(); }catch(_e){}
   try{ tripIdleReset(); }catch(_e){}
