@@ -1914,7 +1914,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 17:31</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 17:48</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -4041,7 +4041,7 @@ function tripBgApply(){
     return;
   }
   i.textContent = (lsGet("rcbTripBg") === "0")
-    ? "Off \u2014 trip mode only runs while the app is open"
+    ? "Off \u2014 turns itself back on next time a trip starts"
     : "On \u2014 keeps running with the screen off";
 }
 if($("mntripbg")) $("mntripbg").addEventListener("click", function(){
@@ -7719,6 +7719,7 @@ function tripFix(p){
   TRIP.last = Date.now(); TRIP.everFixed = true;
   try{ glanceSync(); }catch(_e){}
   try{ chanChip(); }catch(_e){}
+  try{ tripIdleSee(p.coords.latitude, p.coords.longitude); }catch(_e){}
   headingFrom(p);
   if(!TRIP.zoomed && $("mapsheet").classList.contains("on")){
     var pcz = mapPct({x:lo, y:la});
@@ -7924,6 +7925,53 @@ function glanceSync(){
   });
 })();
 
+
+/* ---------- idle shut-off ----------
+   A trip left running is worse than one that never started: it holds a wake
+   lock, keeps the GPS warm, and puts a channel on the lock screen that stops
+   matching where the phone is. People forget. So the trip ends itself.
+   Movement, not time, is the test - a crew parked at a slide for two hours is
+   still working and should keep the channel, but they are also still THERE, so
+   the channel stays right either way. Twenty minutes without moving 250 m ends
+   it, and eight hours ends it regardless. */
+var TRIPIDLE = { at:null, t:0, started:0, warned:false };
+var TRIP_IDLE_MS = 20 * 60 * 1000;
+var TRIP_IDLE_M  = 250;
+var TRIP_MAX_MS  = 8 * 60 * 60 * 1000;
+
+function tripIdleReset(){
+  TRIPIDLE.at = null; TRIPIDLE.t = Date.now();
+  TRIPIDLE.started = Date.now(); TRIPIDLE.warned = false;
+}
+function tripIdleSee(lat, lon){
+  var now = Date.now();
+  if(!TRIPIDLE.at){ TRIPIDLE.at = [lat, lon]; TRIPIDLE.t = now; return; }
+  var moved = 0;
+  try{ moved = hav(TRIPIDLE.at[0], TRIPIDLE.at[1], lat, lon) * 1000; }catch(_e){ return; }
+  if(moved >= TRIP_IDLE_M){
+    TRIPIDLE.at = [lat, lon]; TRIPIDLE.t = now; TRIPIDLE.warned = false;
+    return;
+  }
+  /* One warning two minutes out, so it is never a silent disappearance. */
+  if(!TRIPIDLE.warned && (now - TRIPIDLE.t) > (TRIP_IDLE_MS - 120000)){
+    TRIPIDLE.warned = true;
+    tripSay("Trip mode will stop in two minutes. Nothing has moved.");
+    toast("Trip mode stops in 2 minutes \u2014 tap Trip to keep it running.");
+  }
+  if((now - TRIPIDLE.t) > TRIP_IDLE_MS){
+    stopTrip("Trip mode stopped \u2014 20 minutes without moving.");
+    tripSay("Trip mode has stopped. No movement for twenty minutes.");
+  }
+}
+function tripIdleTick(){
+  if(!TRIP.on) return;
+  if(TRIPIDLE.started && (Date.now() - TRIPIDLE.started) > TRIP_MAX_MS){
+    stopTrip("Trip mode stopped \u2014 it had been running for eight hours.");
+    tripSay("Trip mode has stopped after eight hours.");
+  }
+}
+setInterval(tripIdleTick, 60000);
+
 function stopTrip(hint){
   setTimeout(function(){ try{ chanChip(); }catch(_e){} }, 0);
   if(TRIP.on) bgLog("stop");
@@ -7956,7 +8004,20 @@ $("mztrip").addEventListener("click", function(){
   }
   var self = this;
   TRIP.on = true; self.classList.add("on");
+  /* Clear the diagnostic kill switch. It exists so support can turn the
+     keep-alive off deliberately and watch the page get throttled - it was
+     never meant to be a step a driver has to find in Settings before trip
+     mode works. Starting a trip is an explicit statement of intent and it
+     outranks whatever the switch was left on last time. Turn it off again
+     mid-trip if you are testing; this only fires at the start. */
+  try{
+    if(lsGet("rcbTripBg") === "0"){
+      lsSet("rcbTripBg", "1");
+      if(typeof tripBgApply === "function") tripBgApply();
+    }
+  }catch(_e){}
   try{ chanChip(); }catch(_e){}
+  try{ tripIdleReset(); }catch(_e){}
   TRIP.last = Date.now(); TRIP.stale = false; TRIP.everFixed = false;
   /* Watchdog. The failure that matters is not an error - it is silence. A watch
      can simply stop delivering: permission revoked mid-drive, the OS suspending
