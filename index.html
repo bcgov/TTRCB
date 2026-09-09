@@ -366,7 +366,8 @@ body:has(#adv.on) .filterbar{border-bottom-color:transparent}
   background:var(--chip-off);border:1px solid var(--chip-off-border);
   border-left-width:0;font-size:12px;font-weight:700;color:var(--ink);
   line-height:1.15;text-align:center}
-.seg{display:flex;width:100%;border-radius:var(--r2);overflow:hidden;
+.seg{display:flex;width:auto;margin-left:var(--sp3);margin-right:var(--sp3);
+  border-radius:var(--r2);overflow:hidden;
   box-shadow:0 0 0 1px var(--chip-off-border)}
 .seg .chip40:first-child{border-left-width:1px}
 .seg .chip40{border-color:transparent;border-left-color:var(--chip-off-border)}
@@ -1736,13 +1737,17 @@ html,body{overscroll-behavior-y:none}
   background:var(--navy);border:2px solid var(--gold);box-sizing:content-box}
 
 .seg{display:flex;border-bottom:1px solid var(--hairline)}
-.segbtn{flex:1;padding:12px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;
+.segbtn{flex:1 1 0;min-width:0;padding:12px 3px 10px;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;gap:4px;
   border-right:1px solid var(--hairline)}
+.segbtn:last-child{border-right:none}
 .segbtn:last-child{border-right:none}
 .segbtn:active{background:var(--tint)}
 .segbtn svg{width:19px;height:19px;stroke:var(--navy);fill:none;stroke-width:1.7;
   stroke-linecap:round;stroke-linejoin:round}
-.segbtn span{font-size:10.5px;color:var(--muted);font-weight:600}
+.segbtn span{font-size:10.5px;color:var(--muted);font-weight:600;
+  white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;
+  line-height:1.15;text-align:center}
 .segbtn.dis{opacity:.32}
 .segbtn.act svg{stroke:var(--gold-deep);fill:var(--gold);stroke-width:1.5}
 .segbtn svg{transition:fill var(--t1) ease,stroke var(--t1) ease}
@@ -1863,7 +1868,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 16:27</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 17:00</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -5985,14 +5990,17 @@ function sigShareHtml(){
           var blob = new Blob([html], {type:"text/html"});
           var file = null;
           try{ file = new File([blob], name, {type:"text/html"}); }catch(_e){}
-          var txt = null;
-          try{ txt = new File([new Blob([sigPlainBody()],{type:"text/plain"})],
-                              name.replace(/\.html$/,".txt"), {type:"text/plain"}); }catch(_e){}
-          var files = txt ? [file, txt] : [file];
+          /* One attachment. The .txt alongside it was a hedge against the HTML
+             being stripped in transit; it arrives intact, so the second file
+             only made the message look like two different reports. The body
+             stays short for the same reason - the report IS the attachment. */
+          var files = [file];
           if(file && navigator.canShare && navigator.canShare({files:files}) && navigator.share){
             navigator.share({ files: files,
                               title: "Signal issue \u2014 " + st.n,
-                              text: sigPlainBody() })["catch"](function(){});
+                              text: "Signal issue \u2014 " + st.n +
+                                    ". Full report attached: open it in a browser to see " +
+                                    "the map and hear the recording." })["catch"](function(){});
             return;
           }
           var a = document.createElement("a");
@@ -7394,12 +7402,21 @@ function tripMediaMeta(){
     }catch(_e){}
     var ch = (sv && sv.nearest && sv.nearest.ch) ? ("Ch " + sv.nearest.ch) : "";
     var site = (sv && sv.nearest && sv.nearest.site) ? sv.nearest.site : "";
+    /* Artwork is not decoration here. Without it Android draws a bare, unbranded
+       notification strip and is far less willing to surface the session on the
+       lock screen at all - which is the one place a driver can read it without
+       unlocking. Both icons are already in the service worker's SHELL, so these
+       resolve offline; relative paths so they work under /TTRCB/ too. */
     navigator.mediaSession.metadata = new MediaMetadata({
       title: ch ? (ch + "  \u00b7  " + t) : "Trip mode",
       artist: site ? (site + " \u00b7 announcing channel changes")
                    : (ch ? "announcing channel changes"
                          : "waiting for a fix \u2014 will announce channel changes"),
-      album: "Call Sign Directory"
+      album: "Call Sign Directory",
+      artwork: [
+        { src: "./rcb-icon-b2-192.png", sizes: "192x192", type: "image/png" },
+        { src: "./rcb-icon-b2-512.png", sizes: "512x512", type: "image/png" }
+      ]
     });
     navigator.mediaSession.playbackState = "playing";
     if(!TRIPMS){
