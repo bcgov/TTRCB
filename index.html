@@ -1089,8 +1089,15 @@ html.dark .rd.rd1{stroke:#E8AE3C}
 .tripill:active{background:#EDEFF2}
 .tripill{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;
   touch-action:manipulation}
-.tripill #triplbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  min-width:44px;text-align:left}
+/* Both labels sit in the SAME grid cell, so the pill is always as wide as the
+   longer of them and swapping states cannot resize it. A min-width guess was
+   the first attempt and it was simply too small for "Trip on" - measuring by
+   eye is what caused the shift to survive the first fix. */
+.tripill .tplbl{display:grid;align-items:center}
+.tripill .tplbl>span{grid-area:1/1;white-space:nowrap;text-align:left}
+.tripill .tplbl .b{visibility:hidden}
+.tripill.on .tplbl .a{visibility:hidden}
+.tripill.on .tplbl .b{visibility:visible}
 .tripill svg{width:16px;height:16px;flex:none}
 /* The live dot no longer blinks on and off. A hard blink in peripheral vision
    is the same signal a warning light uses, which is the wrong weight for
@@ -1932,7 +1939,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 18:42</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 20:07</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -2058,7 +2065,7 @@ html,body{overscroll-behavior-y:none}
       <span class="ch">&#8250;</span></button>
     <button class="mrow" id="mntripbg">
       <span class="mi"><svg viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M8.5 7.5L12 4l3.5 3.5"/><path d="M5 15v3a2 2 0 002 2h10a2 2 0 002-2v-3"/></svg></span>
-      <span class="mt"><b>Trip mode with the screen off</b><i id="mntripbgi">On</i></span></button>
+      <span class="mt"><b>Keep running with the screen off</b><i id="mntripbgi">On</i></span></button>
     <button class="mrow" id="mndark">
       <span class="mi"><svg viewBox="0 0 24 24"><path d="M20.4 13.2A8.5 8.5 0 1 1 10.8 3.6a7 7 0 0 0 9.6 9.6z"/></svg></span>
       <span class="mt"><b>Dark mode</b><i id="mndarki">Off</i></span></button>
@@ -2349,7 +2356,7 @@ html,body{overscroll-behavior-y:none}
     <button class="tripill" id="mztrip" aria-label="Trip mode: follows your position and speaks channel changes">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
       <span class="tpdot"></span>
-      <span id="triplbl">Trip</span>
+      <span class="tplbl" id="triplbl"><span class="a">Trip</span><span class="b">Trip on</span></span>
     </button>
     <div class="mapscale" id="mapscale" aria-hidden="true">
       <span class="msbar"></span><span class="mslbl" id="mslbl">100 km</span>
@@ -4058,13 +4065,16 @@ function tripBgApply(){
     if(row){ row.style.opacity = ".55"; row.setAttribute("aria-disabled","true"); }
     return;
   }
-  i.textContent = (lsGet("rcbTripBg") === "0")
-    ? "Off \u2014 turns itself back on next time a trip starts"
-    : "On \u2014 keeps running with the screen off";
+  i.textContent = (lsGet("rcbTripBg") !== "1")
+    ? "Off \u2014 screen stays on instead, and your music is left alone"
+    : "On \u2014 takes over car audio while a trip runs";
 }
 if($("mntripbg")) $("mntripbg").addEventListener("click", function(){
   if(IS_IOS){ toast("iPhone cannot track your position with the screen off."); return; }
-  var off = lsGet("rcbTripBg") === "0";
+  if(lsGet("rcbTripBg") !== "1"){
+    toast("Trip mode will hold your phone's audio \u2014 music and podcasts stop while it runs.");
+  }
+  var off = lsGet("rcbTripBg") !== "1";
   lsSet("rcbTripBg", off ? "1" : "0");
   tripBgApply();
   bgTestApply();
@@ -7524,7 +7534,13 @@ function bgLogReport(){
 }
 var TRIPAUD = null, TRIPMS = false;
 function tripAudioStart(){
-  if(lsGet("rcbTripBg") === "0") return;          /* diagnostic kill switch */
+  /* OFF unless deliberately switched on. The keep-alive works by playing
+     audio, and on Android any page playing media takes audio focus - so it
+     silences Spotify and takes over a Bluetooth car stereo for as long as the
+     trip runs. There is no web API to ask for an ambient focus that would let
+     the two coexist, so this cannot be tuned, only chosen. Default is the wake
+     lock: screen on, car audio untouched. */
+  if(lsGet("rcbTripBg") !== "1") return;          /* diagnostic kill switch */
   try{
     if(!TRIPAUD){
       /* 8 seconds, not 1. Chrome on Android treats media shorter than about
@@ -8007,7 +8023,7 @@ function stopTrip(hint){
   TRIP.cand = null; TRIP.candN = 0; TRIP.last = 0; TRIP.stale = false;
   if(TRIP.wd){ clearInterval(TRIP.wd); TRIP.wd = null; }
   try{ speechSynthesis.cancel(); }catch(_e){}
-  $("triplbl").textContent = "Trip";
+
   $("maphint").textContent = hint || "Trip mode off.";
   try{ glanceHide(); }catch(_e){}
 }
@@ -8022,18 +8038,7 @@ $("mztrip").addEventListener("click", function(){
   }
   var self = this;
   TRIP.on = true; self.classList.add("on");
-  /* Clear the diagnostic kill switch. It exists so support can turn the
-     keep-alive off deliberately and watch the page get throttled - it was
-     never meant to be a step a driver has to find in Settings before trip
-     mode works. Starting a trip is an explicit statement of intent and it
-     outranks whatever the switch was left on last time. Turn it off again
-     mid-trip if you are testing; this only fires at the start. */
-  try{
-    if(lsGet("rcbTripBg") === "0"){
-      lsSet("rcbTripBg", "1");
-      if(typeof tripBgApply === "function") tripBgApply();
-    }
-  }catch(_e){}
+  try{ tripWake(true); }catch(_e){}
   try{ chanChip(); }catch(_e){}
   try{ tripIdleReset(); }catch(_e){}
   TRIP.last = Date.now(); TRIP.stale = false; TRIP.everFixed = false;
@@ -8082,7 +8087,7 @@ $("mztrip").addEventListener("click", function(){
       }
     }
   })();
-  $("triplbl").textContent = "Trip on";
+
   bgLogClear(); bgLog("start");
   tripAudioStart();
   $("maphint").textContent = (lsGet("rcbTripBg") === "0")
