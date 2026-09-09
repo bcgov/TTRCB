@@ -1089,13 +1089,17 @@ html.dark .rd.rd1{stroke:#E8AE3C}
 .tripill:active{background:#EDEFF2}
 .tripill{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;
   touch-action:manipulation}
-.tripill #triplbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tripill #triplbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  min-width:44px;text-align:left}
 .tripill svg{width:16px;height:16px;flex:none}
 /* The live dot no longer blinks on and off. A hard blink in peripheral vision
    is the same signal a warning light uses, which is the wrong weight for
    "voice is on", and it reads as a fault at the edge of the eye while driving.
    It breathes instead: opacity and scale only, both compositor properties. */
-.tripill .tpdot{display:none;width:7px;height:7px;border-radius:50%;
+/* visibility, not display. display:none removed the dot from layout, so
+   turning trip mode on widened the pill by the dot plus its gap and everything
+   inside slid sideways. The space is now reserved in both states. */
+.tripill .tpdot{visibility:hidden;width:7px;height:7px;border-radius:50%;
   background:var(--navy);flex:none;animation:tpblink 2.6s var(--ease,ease-in-out) infinite}
 @keyframes tpblink{0%,100%{opacity:1;transform:scale(1)}
   50%{opacity:.55;transform:scale(.78)}}
@@ -1118,18 +1122,32 @@ html.dark .rd.rd1{stroke:#E8AE3C}
    change width as it changed state.
    The halo is a second box-shadow layer, not an outline, so it stays outside
    the pill's own elevation and cannot be mistaken for a focus ring. */
-.tripill.on{background:var(--gold);color:var(--navy);
-  box-shadow:0 0 0 5px rgba(252,186,25,.30),
-             0 1px 2px rgba(1,51,102,.24),
-             0 6px 18px rgba(1,51,102,.22)}
-.tripill.on:active{background:#E9AC17}
-.tripill.on .tpdot{display:block}
+/* Design B. Inverts to navy so the running state is a change of substance
+   rather than a change of shade, with a gold ring travelling outward. The
+   static 5px halo it replaces was doing the same job silently and got lost
+   against a pale basemap. Layout is untouched: the ring is an ::after on an
+   inset, so it costs no width and cannot reintroduce the toggle shift. */
+.tripill.on{background:var(--navy);color:#fff;
+  box-shadow:0 1px 2px rgba(1,51,102,.28),
+             0 6px 18px rgba(1,51,102,.26)}
+.tripill.on:after{content:"";position:absolute;inset:-3px;border-radius:999px;
+  border:2px solid var(--gold);pointer-events:none;
+  animation:tripring 2.2s cubic-bezier(.22,.61,.36,1) infinite}
+@keyframes tripring{
+  0%{transform:scale(1);opacity:.6}
+  70%{transform:scale(1.45);opacity:0}
+  100%{transform:scale(1.45);opacity:0}}
+.tripill.on .tpdot{background:var(--gold)}
+.tripill.on:active{background:#012C58}
+
+.tripill.on .tpdot{visibility:visible}
 .tripill.on svg{animation:tripwave 2.6s var(--ease,ease-in-out) infinite}
 /* the speaker's outer arc swells very slightly, in step with the dot */
 @keyframes tripwave{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .tripill:active{filter:brightness(.94)}
 @media (prefers-reduced-motion:reduce){
   html:not(.motion-on) .tripill .tpdot,html:not(.motion-on) .tripill.on svg{animation:none}
+html:not(.motion-on) .tripill.on:after{animation:none;opacity:.85}
 }
 .mapzoom button{width:44px;height:44px;background:#fff;border:0;
   color:var(--navy);font-size:22px;font-weight:600;
@@ -1914,7 +1932,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 17:48</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 18:42</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
