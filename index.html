@@ -94,6 +94,25 @@ a{color:var(--blue);text-decoration:none}
 .hdch b{font-size:14px;font-weight:800;color:#26333F;white-space:nowrap;
   letter-spacing:.02em}
 .hdch:active{filter:brightness(.94)}
+/* Trip mode is a background state, and the app can be left on any screen while
+   it runs. Without a mark on the header the only evidence a trip is live is
+   the map screen you are no longer looking at. The chip already carries the
+   channel, so it carries the state too: a slow halo, a live dot, and the same
+   gold it always was - a colour change would read as a different channel. */
+.hdch.live{position:relative}
+.hdch.live:after{content:"";position:absolute;inset:-4px;border-radius:11px;
+  border:2px solid var(--gold);opacity:.55;pointer-events:none;
+  animation:hdchpulse 2.4s ease-out infinite}
+.hdch.live .lived{width:7px;height:7px;border-radius:50%;background:#26333F;
+  margin-right:6px;flex:none;animation:hdchdot 2.4s ease-in-out infinite}
+@keyframes hdchpulse{
+  0%{transform:scale(1);opacity:.6}
+  70%{transform:scale(1.22);opacity:0}
+  100%{transform:scale(1.22);opacity:0}}
+@keyframes hdchdot{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){
+  .hdch.live:after{animation:none;opacity:.85}
+  .hdch.live .lived{animation:none}}
 .hdch.unk{background:var(--surface-alt);box-shadow:none;
   border:1.5px solid var(--hairline)}
 .hdch.unk b{color:var(--muted)}
@@ -1316,11 +1335,21 @@ body:has(#detail.half.on){--sheetlift:calc(32vh + 10px)}
 /* The list of every repeater in the trunk is reference, not an answer. */
 .sheet.half .tclist{display:none}
 .sheet.half .nxfoot{display:none}
-.tclist ul{list-style:none;margin:0;padding:0;column-count:2;column-gap:var(--sp4)}
-.tclist li{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;
-  padding:5px 0;break-inside:avoid}
-.tclist li b{font-variant-numeric:tabular-nums;color:var(--navy)}
-.tclist li.self{font-weight:700}
+/* One column, one alignment. Two columns put four alignment points across a
+   single row, left an orphan whenever the count was odd, and ran at a
+   different size and rhythm from the dt/dd rows directly above - three
+   systems in one sheet. */
+.tclist ul{list-style:none;margin:2px 0 0;padding:0}
+.tclist li{display:flex;align-items:center;gap:var(--sp3);font-size:14px;
+  padding:7px 0;border-top:1px solid var(--hairline)}
+.tclist li:first-child{border-top:none}
+.tclist li span{flex:1;min-width:0;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tclist li b{font-variant-numeric:tabular-nums;color:var(--navy);flex:none;
+  min-width:38px;text-align:center;font-size:13px;font-weight:800;
+  background:var(--surface-alt);border-radius:7px;padding:3px 8px}
+.tclist li.self span{font-weight:700;color:var(--navy)}
+.tclist li.self b{background:var(--navy);color:#fff}
 .tcfine{padding:var(--sp3) var(--sp4) var(--sp4);margin:0;font-size:10.5px;line-height:1.45;color:var(--faint)}
 .losbox{margin-top:10px;padding:10px 12px;border:1px solid var(--hairline);border-radius:10px;
   background:var(--surface)}
@@ -1885,7 +1914,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 17:18</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">8 Sep</span><span class="hdt"> &middot; 17:31</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -7242,15 +7271,21 @@ function chanChip(){
   var el = $("hdch"); if(!el) return;
   var r = chanBest();
   el.style.display = "flex";
+  var live = !!(window.TRIP && TRIP.on);
+  el.classList.toggle("live", live);
+  var dot = live ? '<span class="lived"></span>' : "";
   if(r){
     el.classList.remove("unk");
-    el.innerHTML = "<b>CH " + esc(r.s.v) + "</b>";
-    el.setAttribute("aria-label", "Channel " + r.s.v + " \u2014 " + r.s.n);
+    el.innerHTML = dot + "<b>CH " + esc(r.s.v) + "</b>";
+    el.setAttribute("aria-label", (live ? "Trip mode running. Channel " : "Channel ") +
+                    r.s.v + " \u2014 " + r.s.n);
   } else {
     el.classList.add("unk");
-    el.innerHTML = "<b>CH ?</b>";
-    el.setAttribute("aria-label", "Set your location for a channel");
+    el.innerHTML = dot + "<b>CH ?</b>";
+    el.setAttribute("aria-label", live ? "Trip mode running, waiting for a fix"
+                                       : "Set your location for a channel");
   }
+  el.title = live ? "Trip mode is running \u2014 tap for the big channel display" : "";
 }
 /* Keep the channel chip out of the map. On phones the square map leaves an
    empty band beneath it inside the scrolling wrap; centre the chip vertically
@@ -7360,6 +7395,9 @@ $("chanhud").addEventListener("click", function(){
 });
 
 $("hdch").addEventListener("click", function(){
+  /* During a trip the chip is the trip indicator, so tapping it should show
+     the trip, not navigate away into the map. */
+  if(window.TRIP && TRIP.on){ glanceShow(); return; }
   var r = chanBest();
   if(CONTRACTOR){
     /* showOnMap() needs a position. Open the map on the user's own area. */
@@ -7680,6 +7718,7 @@ function tripFix(p){
   if(TRIP.on) bgLog("fix");
   TRIP.last = Date.now(); TRIP.everFixed = true;
   try{ glanceSync(); }catch(_e){}
+  try{ chanChip(); }catch(_e){}
   headingFrom(p);
   if(!TRIP.zoomed && $("mapsheet").classList.contains("on")){
     var pcz = mapPct({x:lo, y:la});
@@ -7886,6 +7925,7 @@ function glanceSync(){
 })();
 
 function stopTrip(hint){
+  setTimeout(function(){ try{ chanChip(); }catch(_e){} }, 0);
   if(TRIP.on) bgLog("stop");
   tripAudioStop();
   var pill = $("mztrip");
@@ -7916,6 +7956,7 @@ $("mztrip").addEventListener("click", function(){
   }
   var self = this;
   TRIP.on = true; self.classList.add("on");
+  try{ chanChip(); }catch(_e){}
   TRIP.last = Date.now(); TRIP.stale = false; TRIP.everFixed = false;
   /* Watchdog. The failure that matters is not an error - it is silence. A watch
      can simply stop delivering: permission revoked mid-drive, the OS suspending
@@ -8612,7 +8653,7 @@ function openTrunkCard(a, ll){
        '</div>';
 
   if(named && a.sites && a.sites.length){
-    h += '<div class="dsect tclist"><div class="rule"></div><h5>Repeaters in this trunk</h5><ul>' +
+    h += '<div class="dsect tclist"><div class="rule"></div><h5>Repeaters in this trunk</h5><ul class="tcul">' +
          a.sites.map(function(n, si){
            /* chans and sites are ALIGNED PAIRS - chans[0] for every row was a
               real bug once, printing one site's channel against all of them. */
