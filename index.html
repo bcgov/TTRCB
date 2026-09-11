@@ -2008,7 +2008,7 @@ html,body{overscroll-behavior-y:none}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">11 Sep</span><span class="hdt"> &middot; 16:07</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">11 Sep</span><span class="hdt"> &middot; 16:27</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
@@ -7390,16 +7390,23 @@ function setMZ(z, ax, ay){
     if(e.button !== 0) return;                   /* left button only */
     /* Let the controls and pins keep their own clicks. */
     if(e.target.closest("button,a,.mpin,.ofp,.rap,.maplegend")) return;
+    /* Capture is NOT taken here. Taking the pointer on pointerdown makes the
+       following click target .mapwrap instead of whatever was under the
+       cursor, which silently kills every trunk-area and pin click. Capture
+       is taken in pointermove, once the pointer has actually moved far
+       enough to be a drag - by then no click is expected anyway. */
     drag = { x:e.clientX, y:e.clientY,
              sl:wrap.scrollLeft, st:wrap.scrollTop, moved:false };
-    wrap.classList.add("dragging");
-    wrap.setPointerCapture(e.pointerId);
   });
 
   wrap.addEventListener("pointermove", function(e){
     if(!drag) return;
     var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if(!drag.moved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) drag.moved = true;
+    if(!drag.moved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)){
+      drag.moved = true;
+      wrap.classList.add("dragging");
+      try{ wrap.setPointerCapture(e.pointerId); }catch(_){}
+    }
     if(!drag.moved) return;
     wrap.scrollLeft = drag.sl - dx;
     wrap.scrollTop  = drag.st - dy;
@@ -7413,9 +7420,12 @@ function setMZ(z, ax, ay){
     if(drag.moved){
       var swallow = function(ev){ ev.stopPropagation(); ev.preventDefault(); };
       wrap.addEventListener("click", swallow, {capture:true, once:true});
+      /* 0 ms would remove it BEFORE the click is dispatched - click is a
+         separate task after pointerup. 300 ms is past it, and once:true
+         clears the listener first in the normal case. */
       setTimeout(function(){
         wrap.removeEventListener("click", swallow, {capture:true});
-      }, 0);
+      }, 300);
     }
     drag = null;
     wrap.classList.remove("dragging");
