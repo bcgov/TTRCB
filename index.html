@@ -2015,8 +2015,23 @@ html.dark .chk.lt .ck{background:rgba(143,182,228,.16)}
   font-weight:700;font-size:11.5px;color:var(--muted);letter-spacing:.02em;
   font-variant-numeric:tabular-nums}
 .nxcard-q .kcode{background:rgba(1,51,102,.09);color:var(--navy)}
-.tclist li .chk{flex:none}
-.tclist li.self .chk{box-shadow:0 0 0 2px var(--gold)}
+/* -- pill polish, 12 Sep 2026 -- */
+/* A floor width on both halves so every pill in a list is the same size and
+   the codes form a column. Measured: "Ch 14" needs 48px, so the floor is 50 -
+   at 46 the two-digit rows grew the pill by 2px and its left edge stepped out
+   of line down the list. 42px holds any three-digit code with room. */
+.tclist li .chk,.nxrow .chk{flex:none}
+.tclist li .chk .cv,.nxrow .chk .cv{min-width:50px;justify-content:center;
+  font-variant-numeric:tabular-nums}
+.tclist li .chk .ck,.nxrow .chk .ck{min-width:42px;justify-content:center}
+/* The divider. rgba(1,51,102,.09) on a near-white ground is not a boundary,
+   it is a smudge; the two halves need to read as two things. */
+.chk.lt .ck{box-shadow:inset 1.5px 0 0 var(--hairline)}
+/* ⚠️ (0,3,0), and it has to be: `.tclist li.self span` is (0,2,1) and the
+   pill's own root is a span, so a lower-specificity colour here drew navy
+   text on the navy pill and the selected row's channel disappeared. */
+.tclist li.self .chk{color:#fff}
+.tclist li.self .chk .cv,.tclist li.self .chk .ck{color:#fff}
 /* The hero on the site card, where there is room to say which is which. */
 .chk.big{font-size:15px;font-weight:800;border-radius:8px}
 .chk.big u{padding:7px 12px;gap:5px}
@@ -2070,7 +2085,7 @@ html.dark .chk.lt .ck{background:rgba(143,182,228,.16)}
     </div>
     <button class="hdch" id="hdch" style="display:none" aria-label="Channel for your location"></button>
     <button class="stamp" id="hdrefresh" aria-label="Update to the latest edition" title="Update to the latest edition">
-      <span class="hdver"><b>Beta 2</b><i><span class="hdd">11 Sep</span><span class="hdt"> &middot; 17:48</span></i></span>
+      <span class="hdver"><b>Beta 2</b><i><span class="hdd">11 Sep</span><span class="hdt"> &middot; 18:06</span></i></span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10"/><path d="M8 9.5l4 4 4-4"/><path d="M4 17.5h16"/><path d="M4 21h16"/></svg></button>
   </div>
 
